@@ -1,0 +1,235 @@
+= Scrum Poker Websocket API
+:toc: left
+
+== Quick Start
+
+[source,html]
+<script src="http://host:port/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    socket.on('user.create.response', function(response) {
+        if (response.status == 201) {
+            console.log('user created', response.message);
+        } else {
+            console.log('error', response.message);
+        }
+    });
+    socket.emit('user.create.request', {
+        "name": "my name",
+        "password": "secret"
+    });
+</script>
+
+== Events
+
+Events emitted by the user always follow a request/response pattern. For every request event theres is a matching response event indicating a successful or failed action. Response events are only available for the user who sent the request event. The `status` key in the response event indicates the result of a response using HTTP status codes. The `message` key in the response contains the response message if there is any. *The `status` and `message` keys in the response events are omitted in the following list.*
+
+Some events dont follow the request/response pattern. Those events just contain the data. They dont have `status` and `message` key
+
+
+=== user.create.request
+[source,json]
+{
+   'name': 'my name' // min. 3 characters; max. 64 characters;
+   'password': 'secret' // min. 8 characters;
+}
+
+=== user.create.response
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== user.created
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    'name': 'my name'
+}
+
+=== user.list.request
+[source,json]
+{
+}
+
+=== user.list.response
+[source,json]
+[
+    {
+        'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+        'name': 'my name'
+    },
+    ...
+]
+
+=== user.join.request
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+    'password': 'secret'
+}
+
+=== user.join.response
+
+=== user.joined
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== user.leave.request
+=== user.leave.response
+
+=== user.left
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.create.request
+[source,json]
+{
+    'name': 'my group name', // min. 3 characters; max. 64 characters;
+    'password': 'secret' // min. 8 characters
+}
+
+=== group.create.response
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.created
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    'name': 'my group nyme'
+}
+
+=== group.list.request
+
+=== group.list.response
+[source,json]
+[
+    {
+        'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+        'name': 'my group name',
+        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    },
+    ...
+]
+
+=== group.invite.request
+Creator of a group can invite other users
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.invite.response
+
+=== group.invited
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.invites.request
+Requests all invites for groups that you have created and invites for groups you are invited to.
+
+=== group.invites.response
+[source,json]
+[
+    {
+        'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    },
+    ...
+]
+
+=== group.join.request
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+    'password': 'secret'
+}
+
+=== group.join.response
+
+=== group.joined
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.join.decline.request
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.join.decline.response
+
+=== group.join.declined
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+
+=== group.poker.start.request
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.poker.start.response
+
+=== group.poker.bet.request
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+    'bet': 13 // allowed values: -1, 0.5, 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
+}
+
+=== group.poker.bet.response
+
+=== group.poker.betted
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
+    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.poker.end.request
+[source,json]
+{
+    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+}
+
+=== group.poker.end.response
+[source,json]
+[
+    {
+        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80',
+        'bet': 13
+    },
+    ...
+]
+
+=== group.poker.ended
+[
+    {
+        'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80',
+        'bet': 13
+    },
+    ...
+]
+
+== Examples
+
+...

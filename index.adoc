@@ -221,6 +221,7 @@ Requests all invites for groups that you have created and invites for groups you
 ]
 
 === group.poker.ended
+[source]
 [
     {
         "id": "7686d130-2223-4769-ab9f-5cebcf795e80"

@@ -28,32 +28,32 @@ Some events dont follow the request/response pattern. Those events just contain 
 
 
 === user.create.request
-[source,json+javascript]
+[source]
 {
    "name": "my name", // min. 3 characters; max. 64 characters;
    "password": "secret" // min. 8 characters;
 }
 
 === user.create.response
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === user.created
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "name": "my name"
 }
 
 === user.list.request
-[source,json]
+[source]
 {
 }
 
 === user.list.response
-[source,json]
+[source]
 [
     {
         "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
@@ -63,7 +63,7 @@ Some events dont follow the request/response pattern. Those events just contain 
 ]
 
 === user.join.request
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "password": "secret"
@@ -72,7 +72,7 @@ Some events dont follow the request/response pattern. Those events just contain 
 === user.join.response
 
 === user.joined
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
@@ -81,26 +81,26 @@ Some events dont follow the request/response pattern. Those events just contain 
 === user.leave.response
 
 === user.left
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.create.request
-[source,json]
+[source]
 {
     "name": "my group name", // min. 3 characters; max. 64 characters;
     "password": "secret" // min. 8 characters
 }
 
 === group.create.response
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.created
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
     "name": "my group nyme"
@@ -109,7 +109,7 @@ Some events dont follow the request/response pattern. Those events just contain 
 === group.list.request
 
 === group.list.response
-[source,json]
+[source]
 [
     {
         "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
@@ -121,7 +121,7 @@ Some events dont follow the request/response pattern. Those events just contain 
 
 === group.invite.request
 Creator of a group can invite other users
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
@@ -130,7 +130,7 @@ Creator of a group can invite other users
 === group.invite.response
 
 === group.invited
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
@@ -139,7 +139,7 @@ Creator of a group can invite other users
 Requests all invites for groups that you have created and invites for groups you are invited to.
 
 === group.invites.response
-[source,json]
+[source]
 [
     {
         "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
@@ -149,7 +149,7 @@ Requests all invites for groups that you have created and invites for groups you
 ]
 
 === group.join.request
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "password": "secret"
@@ -158,14 +158,14 @@ Requests all invites for groups that you have created and invites for groups you
 === group.join.response
 
 === group.joined
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.join.decline.request
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
@@ -174,14 +174,14 @@ Requests all invites for groups that you have created and invites for groups you
 === group.join.decline.response
 
 === group.join.declined
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 
 === group.poker.start.request
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
@@ -189,7 +189,7 @@ Requests all invites for groups that you have created and invites for groups you
 === group.poker.start.response
 
 === group.poker.bet.request
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "bet": 13 // allowed values: -1, 0.5, 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
@@ -198,20 +198,20 @@ Requests all invites for groups that you have created and invites for groups you
 === group.poker.bet.response
 
 === group.poker.betted
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.poker.end.request
-[source,json]
+[source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.poker.end.response
-[source,json]
+[source]
 [
     {
         "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",

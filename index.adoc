@@ -7,14 +7,14 @@
 <script src="http://host:port/socket.io/socket.io.js"></script>
 <script>
     var socket = io();
-    socket.on('user.create.response', function(response) {
+    socket.on("user.create.response", function(response) {
         if (response.status == 201) {
-            console.log('user created', response.message);
+            console.log("user created", response.message);
         } else {
-            console.log('error', response.message);
+            console.log("error", response.message);
         }
     });
-    socket.emit('user.create.request', {
+    socket.emit("user.create.request", {
         "name": "my name",
         "password": "secret"
     });
@@ -30,21 +30,21 @@ Some events dont follow the request/response pattern. Those events just contain 
 === user.create.request
 [source,json]
 {
-   'name': 'my name' // min. 3 characters; max. 64 characters;
-   'password': 'secret' // min. 8 characters;
+   "name": "my name" // min. 3 characters; max. 64 characters;
+   "password": "secret" // min. 8 characters;
 }
 
 === user.create.response
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === user.created
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
-    'name': 'my name'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "name": "my name"
 }
 
 === user.list.request
@@ -56,8 +56,8 @@ Some events dont follow the request/response pattern. Those events just contain 
 [source,json]
 [
     {
-        'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-        'name': 'my name'
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "name": "my name"
     },
     ...
 ]
@@ -65,8 +65,8 @@ Some events dont follow the request/response pattern. Those events just contain 
 === user.join.request
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-    'password': 'secret'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "password": "secret"
 }
 
 === user.join.response
@@ -74,7 +74,7 @@ Some events dont follow the request/response pattern. Those events just contain 
 === user.joined
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === user.leave.request
@@ -83,27 +83,27 @@ Some events dont follow the request/response pattern. Those events just contain 
 === user.left
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.create.request
 [source,json]
 {
-    'name': 'my group name', // min. 3 characters; max. 64 characters;
-    'password': 'secret' // min. 8 characters
+    "name": "my group name", // min. 3 characters; max. 64 characters;
+    "password": "secret" // min. 8 characters
 }
 
 === group.create.response
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.created
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
-    'name': 'my group nyme'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "name": "my group nyme"
 }
 
 === group.list.request
@@ -112,9 +112,9 @@ Some events dont follow the request/response pattern. Those events just contain 
 [source,json]
 [
     {
-        'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-        'name': 'my group name',
-        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "name": "my group name",
+        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
     },
     ...
 ]
@@ -123,8 +123,8 @@ Some events dont follow the request/response pattern. Those events just contain 
 Creator of a group can invite other users
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.invite.response
@@ -132,7 +132,7 @@ Creator of a group can invite other users
 === group.invited
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.invites.request
@@ -142,8 +142,8 @@ Requests all invites for groups that you have created and invites for groups you
 [source,json]
 [
     {
-        'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
     },
     ...
 ]
@@ -151,8 +151,8 @@ Requests all invites for groups that you have created and invites for groups you
 === group.join.request
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-    'password': 'secret'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "password": "secret"
 }
 
 === group.join.response
@@ -160,15 +160,15 @@ Requests all invites for groups that you have created and invites for groups you
 === group.joined
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
-    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.join.decline.request
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
-    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.join.decline.response
@@ -176,14 +176,14 @@ Requests all invites for groups that you have created and invites for groups you
 === group.join.declined
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 
 === group.poker.start.request
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.poker.start.response
@@ -191,8 +191,8 @@ Requests all invites for groups that you have created and invites for groups you
 === group.poker.bet.request
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-    'bet': 13 // allowed values: -1, 0.5, 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "bet": 13 // allowed values: -1, 0.5, 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
 }
 
 === group.poker.bet.response
@@ -200,22 +200,22 @@ Requests all invites for groups that you have created and invites for groups you
 === group.poker.betted
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80',
-    'userId': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.poker.end.request
 [source,json]
 {
-    'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.poker.end.response
 [source,json]
 [
     {
-        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80',
-        'bet': 13
+        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "bet": 13
     },
     ...
 ]
@@ -223,9 +223,9 @@ Requests all invites for groups that you have created and invites for groups you
 === group.poker.ended
 [
     {
-        'id': '7686d130-2223-4769-ab9f-5cebcf795e80'
-        'userId': '7686d130-2223-4769-ab9f-5cebcf795e80',
-        'bet': 13
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "bet": 13
     },
     ...
 ]

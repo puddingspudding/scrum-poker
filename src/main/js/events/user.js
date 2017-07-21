@@ -42,7 +42,7 @@ exports.handleCreateRequests = function(socket, usersDB) {
             });
 
         } catch (e) {
-            console.log(e);
+            console.error(e);
             socket.emit('user.create.response', {
                 'status': 500,
                 'message': e
@@ -53,7 +53,6 @@ exports.handleCreateRequests = function(socket, usersDB) {
 
 exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
     socket.on('user.join.request', function(request) {
-        console.log(request);
         try {
             if (!('id' in request)) {
                 throw 'id not set';
@@ -68,7 +67,6 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
                 throw 'password is not a string';
             }
 
-            console.log('query db');
             usersDB.findOne({'_id': request.id}).then(function(user, err) {
                 if (user && bcrypt.compareSync(request.password, user.password)) {
                     socket.emit('user.join.response', {
@@ -89,7 +87,7 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
             });
 
         } catch (e) {
-            console.log(e);
+            console.error(e);
             socket.emit('user.join.response', {
                 'status': 500,
                 'message': e

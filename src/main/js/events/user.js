@@ -81,7 +81,8 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
                     socketsByUserId[socket.userId] = socket;
                 } else {
                     socket.emit('user.join.response', {
-                        'login invalid'
+                        'status': 500,
+                        'message': 'login invalid'
                     });
                 }
             });

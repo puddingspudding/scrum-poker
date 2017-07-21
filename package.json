@@ -1,9 +1,10 @@
 {
-  "name": "socket-chat-example",
+  "name": "scrum-poker",
   "version": "0.0.1",
-  "description": "my first socket.io app",
+  "description": "Royal Straight Flush",
   "dependencies": {
     "asciidoctor-cli": "^1.5.5-beta.3",
+    "bcrypt": "^1.0.2",
     "express": "^4.15.2",
     "node-localdb": "0.0.3",
     "socket.io": "^2.0.3",

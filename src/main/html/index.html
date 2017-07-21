@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+/*
+  socket.on('user.create.response', function(event) {
+    console.log(event);
+  });
+*/
+  socket.on('user.joined', function(user) {
+    console.log('user joined', user);
+  });
+  socket.on('user.join.response', function(response) {
+    console.log(response);
+  });
+  
+  socket.emit('user.join.request', {
+    'id': '28a7538e-650d-4ad3-b775-fe724e6e41e6',
+    'password': '12345678'
+  });
+
+  
+
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,19 @@
+= README
+
+== Preparation
+[source]
+----
+npm install
+----
+
+== Run
+[source]
+----
+node index.js
+----
+
+== Docs
+[source]
+----
+./node_modules/asciidoctor-cli/bin/asciidoctorjs -B ./src/main/adoc/ src/main/adoc/index.adoc -D ./docs
+----

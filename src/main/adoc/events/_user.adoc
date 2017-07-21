@@ -1,0 +1,63 @@
+== User
+
+=== user.create.request
+[source]
+{
+   "name": "my name", // min. 3 characters; max. 64 characters;
+   "password": "secret" // min. 8 characters;
+}
+
+=== user.create.response
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+}
+
+=== user.created
+Recipients: all joined users
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "name": "my name"
+}
+
+=== user.list.request
+[source]
+{
+}
+
+=== user.list.response
+[source]
+[
+    {
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "name": "my name"
+    },
+    ...
+]
+
+=== user.join.request
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "password": "secret"
+}
+
+=== user.join.response
+
+=== user.joined
+Recipients: all joined users
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+}
+
+=== user.leave.request
+=== user.leave.response
+
+=== user.left
+Recipients: all joined users
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+}

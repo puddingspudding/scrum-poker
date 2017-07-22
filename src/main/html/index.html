@@ -8,24 +8,27 @@
 <script>
   var socket = io();
 
-/*
-  socket.on('user.create.response', function(event) {
-    console.log(event);
-  });
-*/
-  socket.on('user.joined', function(user) {
-    console.log('user joined', user);
-  });
-  socket.on('user.join.response', function(response) {
-    console.log(response);
-  });
+  socket.on('user.joined', console.log);
+  socket.on('user.created', console.log);
+  socket.on('user.create.response', console.log);
+  socket.on('user.join.response', console.log);
+  socket.on('user.list.response', console.log);
+  socket.on('user.leave.response', console.log);
+  socket.on('user.left', console.log);
+  socket.on('user.groups.response', console.log);
   
-  socket.emit('user.join.request', {
-    'id': '28a7538e-650d-4ad3-b775-fe724e6e41e6',
-    'password': '12345678'
-  });
+  
+  socket.on('group.create.response', console.log);
+  socket.on('group.list.response', console.log);
+  socket.on('group.users.response', console.log);
+  socket.on('group.join.response', console.log);
+  socket.on('group.poker.start.response', console.log);
+  socket.on('group.poker.started', console.log);
+  socket.on('group.poker.bet.response', console.log);
+  socket.on('group.poker.end.response', console.log);
+  socket.on('group.poker.betted', console.log);
+  socket.on('group.poker.ended', console.log);
 
-  
 
 </script>
 

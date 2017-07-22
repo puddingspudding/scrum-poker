@@ -1,5 +1,9 @@
 = README
 
+== Dependencies
+* nodejs
+* npm
+
 == Preparation
 [source]
 ----

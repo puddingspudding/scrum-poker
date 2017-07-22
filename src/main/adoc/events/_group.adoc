@@ -1,4 +1,5 @@
 == Group
+`id` in request/reponse events are group ids
 
 === group.create.request
 [source]
@@ -18,12 +19,15 @@ Recipients: all joined users
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-    "name": "my group nyme"
+    "name": "my group nyme",
+    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.list.request
+Request for all available groups
 
 === group.list.response
+List of all available groups
 [source]
 [
     {
@@ -34,33 +38,18 @@ Recipients: all joined users
     ...
 ]
 
-=== group.invite.request
-Creator of a group can invite other users
-[source]
-{
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
-    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
-}
-
-=== group.invite.response
-
-=== group.invited
-Recipients: invited user
+=== group.users.request
+Request user ids for given group
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.invites.request
-Requests all invites for groups that you have created and invites for groups you are invited to.
-
-=== group.invites.response
+=== group.users.response
+List of user ids
 [source]
 [
-    {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
-        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
-    },
+    "7686d130-2223-4769-ab9f-5cebcf795e80",
     ...
 ]
 
@@ -81,24 +70,8 @@ Recipients: users in group
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.join.decline.request
-[source]
-{
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
-}
-
-=== group.join.decline.response
-
-=== group.join.declined
-Recipients: group owner
-[source]
-{
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-}
-
-
 === group.poker.start.request
+Request to start poker by group owner
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
@@ -107,6 +80,7 @@ Recipients: group owner
 === group.poker.start.response
 
 === group.poker.started
+If poker has been started all bets in this group going to be deleted
 Recipients: users in group
 [source]
 {
@@ -131,20 +105,14 @@ Recipients: users in group
 }
 
 === group.poker.end.request
+Request to end current poker by group onwer
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
 === group.poker.end.response
-[source]
-[
-    {
-        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
-        "bet": 13
-    },
-    ...
-]
+
 
 === group.poker.ended
 Recipients: users in group
@@ -157,3 +125,4 @@ Recipients: users in group
     },
     ...
 ]
+

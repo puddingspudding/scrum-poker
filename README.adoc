@@ -22,5 +22,6 @@ npm start
 == Docs
 [source]
 ----
-./node_modules/asciidoctor-cli/bin/asciidoctorjs -B ./src/main/adoc/ src/main/adoc/index.adoc -D ./docs
+npm run docs
+npm run open-docs
 ----

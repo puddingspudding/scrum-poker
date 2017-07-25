@@ -8,5 +8,9 @@
     "express": "^4.15.2",
     "node-localdb": "0.0.3",
     "socket.io": "^2.0.3"
+  },
+  "scripts": {
+    "docs": "./node_modules/asciidoctor-cli/bin/asciidoctorjs -B ./src/main/adoc/ src/main/adoc/index.adoc -D ./docs",
+    "open-docs": "open ./docs/index.html"
   }
 }

@@ -1,7 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Scrum Poker API Debug HTML</title>
   </head>
   <body>
     <script src="/socket.io/socket.io.js"></script>
@@ -10,25 +10,11 @@
 
   socket.on('user.joined', console.log);
   socket.on('user.created', console.log);
-  socket.on('user.create.response', console.log);
-  socket.on('user.join.response', console.log);
-  socket.on('user.list.response', console.log);
-  socket.on('user.leave.response', console.log);
   socket.on('user.left', console.log);
-  socket.on('user.groups.response', console.log);
-  
-  
-  socket.on('group.create.response', console.log);
-  socket.on('group.list.response', console.log);
-  socket.on('group.users.response', console.log);
-  socket.on('group.join.response', console.log);
-  socket.on('group.poker.start.response', console.log);
+
   socket.on('group.poker.started', console.log);
-  socket.on('group.poker.bet.response', console.log);
-  socket.on('group.poker.end.response', console.log);
   socket.on('group.poker.betted', console.log);
   socket.on('group.poker.ended', console.log);
-
 
 </script>
 

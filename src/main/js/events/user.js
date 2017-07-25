@@ -28,28 +28,36 @@ exports.handleCreateRequests = function(socket, usersById, usersDB, socketsByUse
                 throw 'password min length 8';
             }
 
-            usersDB.insert({
-                'name': request.name,
-                'password': bcrypt.hashSync(request.password, saltRounds)
-            }).then(function(r) {
-                usersById[r._id] = {
-                    'id': r._id,
-                    'name': request.name
+            usersDB.findOne({"name": request.name}).then(function(existingUser) {
+                if (existingUser) {
+                    response({
+                        'status': 500,
+                        'message': "name already exists" 
+                    });
+                    return;
                 }
-                response({
-                    'status': 200,
-                    'message': {
-                        'id': r._id
-                    }
-                });
-                for (var userId in socketsByUserId) {
-                    socketsByUserId[userId].emit('user.created', {
+                usersDB.insert({
+                    'name': request.name,
+                    'password': bcrypt.hashSync(request.password, saltRounds)
+                }).then(function(r) {
+                    usersById[r._id] = {
                         'id': r._id,
                         'name': request.name
+                    }
+                    response({
+                        'status': 200,
+                        'message': {
+                            'id': r._id
+                        }
                     });
-                }
+                    for (var userId in socketsByUserId) {
+                        socketsByUserId[userId].emit('user.created', {
+                            'id': r._id,
+                            'name': request.name
+                        });
+                    }
+                });
             });
-
         } catch (e) {
             console.error(e);
             response({
@@ -106,11 +114,11 @@ exports.handleLeaveRequests = function(socket, socketsByUserId) {
 exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
     socket.on('user.join', function(request, response) {
         try {
-            if (!('id' in request)) {
-                throw 'id not set';
+            if (!('name' in request)) {
+                throw 'name not set';
             }
-            if (typeof request.id !== 'string') {
-                throw 'id is not a string';
+            if (typeof request.name !== 'string') {
+                throw 'name is not a string';
             }
             if (!('password' in request)) {
                 throw 'password not set';
@@ -119,7 +127,7 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
                 throw 'password is not a string';
             }
 
-            usersDB.findOne({'_id': request.id}).then(function(user, err) {
+            usersDB.findOne({'name': request.name}).then(function(user, err) {
                 if (user && bcrypt.compareSync(request.password, user.password)) {
                     response({
                         'status': 200

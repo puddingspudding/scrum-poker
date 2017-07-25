@@ -11,7 +11,7 @@
 Response
 [source]
 {
-    "status": 200, // or 500 if name or password dont fit requirements
+    "status": 200, // or 500 if name or password dont fit requirements or name already taken
     "message": {
         "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
     } 
@@ -46,7 +46,7 @@ Response
 === user.join
 [source]
 {
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "name": "my name",
     "password": "secret"
 }
 

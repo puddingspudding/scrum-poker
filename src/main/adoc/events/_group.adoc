@@ -111,7 +111,7 @@ Recipients: users in group
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
-    "bet": 13 // allowed values: 0.5, 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
+    "bet": 13 // allowed values: 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
 }
 
 Response

@@ -16,7 +16,7 @@ npm install
 == Run
 [source]
 ----
-node index.js
+npm start
 ----
 
 == Docs

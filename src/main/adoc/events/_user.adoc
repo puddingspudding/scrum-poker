@@ -1,17 +1,20 @@
 == User
 `id` in request/reponse events are user ids
 
-=== user.create.request
+=== user.create
 [source]
 {
    "name": "my name", // min. 3 characters; max. 64 characters;
    "password": "secret" // min. 8 characters;
 }
 
-=== user.create.response
+Response
 [source]
 {
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "status": 200, // or 500 if name or password dont fit requirements
+    "message": {
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    } 
 }
 
 === user.created
@@ -22,29 +25,36 @@ Recipients: all joined users
     "name": "my name"
 }
 
-=== user.list.request
+=== user.list
 [source]
 {
 }
 
-=== user.list.response
+Response
 [source]
-[
-    {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
-        "name": "my name"
-    },
-    ...
-]
+{
+    "status": 200, // 401 if not joined
+    "message": [
+        {
+            "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+            "name": "my name"
+        },
+        ...
+    ]
+}
 
-=== user.join.request
+=== user.join
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "password": "secret"
 }
 
-=== user.join.response
+Response
+[source]
+{
+    "status": 200 // 400 if login invalid; 500 if `id` or `password` is not set
+}
 
 === user.joined
 Recipients: all joined users
@@ -53,8 +63,15 @@ Recipients: all joined users
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== user.leave.request
-=== user.leave.response
+=== user.leave
+[source]
+{
+}
+
+[source]
+{
+    "status": 200 // 401 if not joined
+}
 
 === user.left
 Recipients: all joined users
@@ -63,13 +80,19 @@ Recipients: all joined users
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== user.groups.request
+=== user.groups
 Request for all group ids you are in
-
-=== user.groups.response
-List all group ids you are in
 [source]
-[
-    "7686d130-2223-4769-ab9f-5cebcf795e80",
-    ...
-]
+{
+}
+
+Response:
+[source]
+{
+    "status": 200, // 401 if not joined
+    "message": [
+        "7686d130-2223-4769-ab9f-5cebcf795e80",
+        ...
+    ]
+}
+

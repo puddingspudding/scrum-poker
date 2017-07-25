@@ -4,7 +4,7 @@ const saltRounds = 10;
 var exports = module.exports = {};
 
 exports.handleCreateRequests = function(socket, usersById, usersDB, socketsByUserId, groupIdsByUserId) {
-    socket.on('user.create.request', function(request) {
+    socket.on('user.create', function(request, response) {
         try {
             // name validation
             if (!('name' in request)) {
@@ -36,7 +36,7 @@ exports.handleCreateRequests = function(socket, usersById, usersDB, socketsByUse
                     'id': r._id,
                     'name': request.name
                 }
-                socket.emit('user.create.response', {
+                response({
                     'status': 200,
                     'message': {
                         'id': r._id
@@ -52,7 +52,7 @@ exports.handleCreateRequests = function(socket, usersById, usersDB, socketsByUse
 
         } catch (e) {
             console.error(e);
-            socket.emit('user.create.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -61,9 +61,9 @@ exports.handleCreateRequests = function(socket, usersById, usersDB, socketsByUse
 }
 
 exports.handleListRequests = function(socket, socketsByUserId, usersById) {
-    socket.on('user.list.request', function(request) {
+    socket.on('user.list', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('user.list.response', {
+            response({
                 'status': 401
             });
             return;
@@ -75,7 +75,7 @@ exports.handleListRequests = function(socket, socketsByUserId, usersById) {
             }
             users.push(usersById[userId]);
         }
-        socket.emit('user.list.request', {
+        response({
             'status': 200,
             'message': users
         });
@@ -83,15 +83,15 @@ exports.handleListRequests = function(socket, socketsByUserId, usersById) {
 }
 
 exports.handleLeaveRequests = function(socket, socketsByUserId) {
-    socket.on('user.leave.request', function(request) {
+    socket.on('user.leave', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('user.leave.response', {
+            response({
                 'status': 401
             });
             return;
         }
         delete socketsByUserId[socket.userId];
-        socket.emit('user.leave.response', {
+        response({
             'status': 200
         });
         for (var userId in socketsByUserId) {
@@ -104,7 +104,7 @@ exports.handleLeaveRequests = function(socket, socketsByUserId) {
 }
 
 exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
-    socket.on('user.join.request', function(request) {
+    socket.on('user.join', function(request, response) {
         try {
             if (!('id' in request)) {
                 throw 'id not set';
@@ -121,7 +121,7 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
 
             usersDB.findOne({'_id': request.id}).then(function(user, err) {
                 if (user && bcrypt.compareSync(request.password, user.password)) {
-                    socket.emit('user.join.response', {
+                    response({
                         'status': 200
                     });
                     socket.userId = user._id;
@@ -132,8 +132,8 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
                     }
                     socketsByUserId[socket.userId] = socket;
                 } else {
-                    socket.emit('user.join.response', {
-                        'status': 500,
+                    response({
+                        'status': 400,
                         'message': 'login invalid'
                     });
                 }
@@ -141,7 +141,7 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
 
         } catch (e) {
             console.error(e);
-            socket.emit('user.join.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -150,14 +150,14 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
 }
 
 exports.handleGroupsRequests = function(socket, groupIdsByUserId) {
-    socket.on('user.groups.request', function(request) {
+    socket.on('user.groups', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('user.leave.response', {
+            response({
                 'status': 401
             });
             return;
         }
-        socket.emit('user.groups.response', {
+        response({
             'status': 200,
             'message': groupIdsByUserId[socket.userId]
         });

@@ -1,17 +1,20 @@
 == Group
 `id` in request/reponse events are group ids
 
-=== group.create.request
+=== group.create
 [source]
 {
     "name": "my group name", // min. 3 characters; max. 64 characters;
     "password": "secret" // min. 8 characters
 }
 
-=== group.create.response
+Response
 [source]
 {
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "status": 200, // 401 if not joined
+    "message": {
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    }
 }
 
 === group.created
@@ -23,44 +26,57 @@ Recipients: all joined users
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.list.request
+=== group.list
 Request for all available groups
+[source]
+{
+}
 
-=== group.list.response
+Response
 List of all available groups
 [source]
-[
-    {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
-        "name": "my group name",
-        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
-    },
-    ...
-]
+{
+    "status": 200, // 401 if not joined
+    "message": [
+        {
+            "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+            "name": "my group name",
+            "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
+        },
+        ...
+    ]
+}
 
-=== group.users.request
+=== group.users
 Request user ids for given group
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.users.response
+Response:
 List of user ids
 [source]
-[
-    "7686d130-2223-4769-ab9f-5cebcf795e80",
-    ...
-]
+{
+    "status": 200, // 401 if not joined
+    "message": [
+        "7686d130-2223-4769-ab9f-5cebcf795e80",
+        ...
+    ]
+}
 
-=== group.join.request
+=== group.join
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "password": "secret"
 }
 
-=== group.join.response
+Response
+[source]
+{
+    "status": 200 // 400 if password is invalid; 401 if not joined; 404 if group does not exist; 500 if `id` or  `password` is not set
+}
 
 === group.joined
 Recipients: users in group
@@ -70,14 +86,18 @@ Recipients: users in group
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.poker.start.request
+=== group.poker.start
 Request to start poker by group owner
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.poker.start.response
+Response
+[source]
+{
+    "status": 200 // 401 if not joined; 403 if not owner of the group; 404 if group not found; 500 if `id` not valid
+}
 
 === group.poker.started
 If poker has been started all bets in this group going to be deleted
@@ -87,14 +107,18 @@ Recipients: users in group
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.poker.bet.request
+=== group.poker.bet
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
     "bet": 13 // allowed values: 0.5, 1, 2, 3, 5, 8, 13, 20, 30, 40, 100
 }
 
-=== group.poker.bet.response
+Response
+[source]
+{
+    "status": 200 // 401 if not joined; 404 if not in group; 500 if `bet` not valid or `id` not valid
+}
 
 === group.poker.betted
 Recipients: users in group
@@ -104,15 +128,18 @@ Recipients: users in group
     "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.poker.end.request
+=== group.poker.end
 Request to end current poker by group onwer
 [source]
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
-=== group.poker.end.response
-
+Response
+[source]
+{
+    "status": 200 // 401 if not joined; 403 if not owner of the group; 404 if group not found; 500 if `id` not valid
+}
 
 === group.poker.ended
 Recipients: users in group

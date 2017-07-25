@@ -4,9 +4,9 @@ const saltRounds = 10;
 var exports = module.exports = {};
 
 exports.handleCreateRequests = function(socket, groupsById, socketsByUserId, groupsDB, groupusersDB, userIdsByGroupId, groupIdsByUserId) {
-    socket.on('group.create.request', function(request) {
+    socket.on('group.create', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('group.create.response', {
+            response({
                 'status': 401
             });
             return;
@@ -52,7 +52,7 @@ exports.handleCreateRequests = function(socket, groupsById, socketsByUserId, gro
                     userIdsByGroupId[group.id] = [socket.userId];
                     groupIdsByUserId[socket.userId].push(group.id);
 
-                    socket.emit('group.create.response', {
+                    response({
                         'status': 200,
                         'message': {
                             'id': group.id
@@ -66,7 +66,7 @@ exports.handleCreateRequests = function(socket, groupsById, socketsByUserId, gro
 
         } catch (e) {
             console.error(e);
-            socket.emit('group.create.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -76,9 +76,9 @@ exports.handleCreateRequests = function(socket, groupsById, socketsByUserId, gro
 };
 
 exports.handleListRequests = function(socket, groupsById) {
-    socket.on('group.list.request', function(request) {
+    socket.on('group.list', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('user.leave.response', {
+            response({
                 'status': 401
             });
             return;
@@ -87,7 +87,7 @@ exports.handleListRequests = function(socket, groupsById) {
         for (var groupId in groupsById) {
             groups.push(groupsById[groupId]);
         }
-        socket.emit('group.list.response', {
+        response({
             'status': 200,
             'message': groups
         });
@@ -95,9 +95,9 @@ exports.handleListRequests = function(socket, groupsById) {
 };
 
 exports.handleUsersRequests = function(socket, userIdsByGroupId, groupIdsByUserId, groupsById) {
-    socket.on('group.users.request', function(request) {
+    socket.on('group.users', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('group.users.response', {
+            response({
                 'status': 401
             });
             return;
@@ -112,25 +112,25 @@ exports.handleUsersRequests = function(socket, userIdsByGroupId, groupIdsByUserI
             }
 
             if (groupIdsByUserId[socket.userId].indexOf(request.id) == -1) {
-                socket.emit('group.users.response', {
+                response({
                     'status': 401
                 });
                 return;
             }
             if (!(request.id in groupsById)) {
-                socket.emit('group.users.response', {
+                response({
                     'status': 404
                 });
                 return;
             }
 
-            socket.emit('group.users.response', {
+            response({
                 'status': 200,
                 'message': userIdsByGroupId[request.id]
             });
         } catch (e) {
             console.error(e);
-            socket.emit('group.users.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -140,9 +140,9 @@ exports.handleUsersRequests = function(socket, userIdsByGroupId, groupIdsByUserI
 };
 
 exports.handleJoinRequests = function(socket, socketsByUserId, groupIdsByUserId, userIdsByGroupId, groupusersDB, groupsDB) {
-    socket.on('group.join.request', function(request) {
+    socket.on('group.join', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('group.users.response', {
+            response({
                 'status': 401
             });
             return;
@@ -176,11 +176,9 @@ exports.handleJoinRequests = function(socket, socketsByUserId, groupIdsByUserId,
                             'userId': socket.userId,
                             'groupId': request.id
                         }).then(function(gu) {
-                            socket.emit('group.join.response', {
+                            response({
                                 'status': 200
                             });
-                            userIdsByGroupId[request.id].push(socket.userId);
-                            groupIdsByUserId[socket.userId].push(request.id);
                             for (var key in userIdsByGroupId[request.id]) {
                                 var s = socketsByUserId[userIdsByGroupId[request.id][key]];
                                 if (s) {
@@ -190,15 +188,17 @@ exports.handleJoinRequests = function(socket, socketsByUserId, groupIdsByUserId,
                                     });
                                 }
                             }
+                            groupIdsByUserId[socket.userId].push(request.id);
+                            userIdsByGroupId[request.id].push(socket.userId);
                         });
                     } else {
-                        socket.emit('group.users.response', {
-                            'status': 500,
+                        response({
+                            'status': 400,
                             'message': 'password invalid'
-                        });    
+                        });
                     }
                 } else {
-                    socket.emit('group.users.response', {
+                    response({
                         'status': 404
                     });
                 }
@@ -206,7 +206,7 @@ exports.handleJoinRequests = function(socket, socketsByUserId, groupIdsByUserId,
 
         } catch (e) {
             console.error(e);
-            socket.emit('group.join.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -216,9 +216,9 @@ exports.handleJoinRequests = function(socket, socketsByUserId, groupIdsByUserId,
 
 
 exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGroupId, groupsById, betsByGroupId) {
-    socket.on('group.poker.start.request', function(request) {
+    socket.on('group.poker.start', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('group.users.response', {
+            response({
                 'status': 401
             });
             return;
@@ -248,7 +248,7 @@ exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGr
 
             betsByGroupId[request.id] = [];
 
-            socket.emit('group.poker.start.response', {
+            response({
                 'status': 200
             });
             for (var key in userIdsByGroupId[request.id]) {
@@ -261,7 +261,7 @@ exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGr
             }
         } catch (e) {
             console.error(e);
-            socket.emit('group.poker.start.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -270,9 +270,9 @@ exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGr
 };
 
 exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserId, userIdsByGroupId, socketsByUserId) {
-    socket.on('group.poker.bet.request', function(request) {
+    socket.on('group.poker.bet', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('group.users.response', {
+            response({
                 'status': 401
             });
             return;
@@ -295,7 +295,7 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
 
             // check if user is in group
             if (groupIdsByUserId[socket.userId].indexOf(request.id) == -1) {
-                socket.emit('group.poker.bet.request', {
+                response({
                     'status': 404
                 });
                 return;
@@ -310,7 +310,7 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
                 'userId': socket.userId,
                 'bet': request.bet
             });
-            socket.emit('group.poker.bet.response', {
+            response({
                 'status': 200
             });
 
@@ -326,7 +326,7 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
 
         } catch (e) {
             console.error(e);
-            socket.emit('group.poker.bet.response', {
+            response({
                 'status': 500,
                 'message': e
             });
@@ -335,9 +335,9 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
 };
 
 exports.handlePokerEndRequests = function(socket, betsByGroupId, socketsByUserId, userIdsByGroupId, groupsById) {
-    socket.on('group.poker.end.request', function(request) {
+    socket.on('group.poker.end', function(request, response) {
         if (!('userId' in socket)) {
-            socket.emit('group.users.response', {
+            response({
                 'status': 401
             });
             return;
@@ -353,22 +353,21 @@ exports.handlePokerEndRequests = function(socket, betsByGroupId, socketsByUserId
 
             // check if group exists and user is owner
             if (!(request.id in groupsById)) {
-                socket.emit('group.poker.start.response', {
+                response({
                     'status': 404
                 });
                 return;
             }
             if (groupsById[request.id].userId != socket.userId) {
-                socket.emit('group.poker.start.response', {
+                response({
                     'status': 403
                 });
                 return;   
             }
 
-            socket.emit('group.poker.end.response', {
+            response({
                 'status': 200
             });
-
 
             var bets = betsByGroupId[request.id];
             betsByGroupId[request.id] = []
@@ -381,7 +380,7 @@ exports.handlePokerEndRequests = function(socket, betsByGroupId, socketsByUserId
             }
         } catch (e) {
             console.error(e);
-            socket.emit('group.poker.end.response', {
+            response({
                 'status': 500,
                 'message': e
             });

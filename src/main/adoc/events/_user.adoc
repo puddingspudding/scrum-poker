@@ -53,7 +53,10 @@ Response
 Response
 [source]
 {
-    "status": 200 // 400 if login invalid; 500 if `id` or `password` is not set
+    "status": 200, // 400 if login invalid; 500 if `id` or `password` is not set
+    "message": {
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    }
 }
 
 === user.joined

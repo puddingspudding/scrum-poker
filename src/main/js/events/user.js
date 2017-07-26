@@ -27,6 +27,7 @@ exports.handleCreateRequests = function(socket, usersById, usersDB, socketsByUse
             if (request.password.length < 8) {
                 throw 'password min length 8';
             }
+            request.name = request.name.trim();
 
             usersDB.findOne({"name": request.name}).then(function(existingUser) {
                 if (existingUser) {
@@ -129,10 +130,13 @@ exports.handleJoinRequests = function(socket, socketsByUserId, usersDB) {
 
             usersDB.findOne({'name': request.name}).then(function(user, err) {
                 if (user && bcrypt.compareSync(request.password, user.password)) {
-                    response({
-                        'status': 200
-                    });
                     socket.userId = user._id;
+                    response({
+                        'status': 200,
+                        'message': {
+                            'id': socket.userId
+                        }
+                    });
                     for (var key in socketsByUserId) {
                         socketsByUserId[key].emit('user.joined', {
                             'id': socket.userId

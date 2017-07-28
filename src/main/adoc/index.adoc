@@ -20,12 +20,16 @@
     });
 </script>
 
+== REST
+
+include::rest/_users.adoc[leveloffset=+1]
+include::rest/_tokens.adoc[leveloffset=+1]
+
 == Events
 
 Events emitted by the user always have a callback reponse. The response always contain a `status` key and indicates the result of the response using HTTP status codes. The `message` key in the response contains the response message if there is any.
 
 Some events dont follow the request/response pattern. Those events just contain the data. They dont have the `status` and `message` key
-
 
 include::events/_user.adoc[leveloffset=+1]
 include::events/_group.adoc[leveloffset=+1]

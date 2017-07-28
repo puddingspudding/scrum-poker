@@ -1,23 +1,8 @@
 == User
 `id` in request/reponse events are user ids
 
-=== user.create
-[source]
-{
-   "name": "my name", // min. 3 characters; max. 64 characters;
-   "password": "secret" // min. 8 characters;
-}
 
-Response
-[source]
-{
-    "status": 200, // or 500 if name or password dont fit requirements or name already taken
-    "message": {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-    } 
-}
-
-=== user.created
+=== user.joined
 Recipients: all joined users
 [source]
 {
@@ -26,6 +11,7 @@ Recipients: all joined users
 }
 
 === user.list
+Lists all connetecd users
 [source]
 {
 }
@@ -41,39 +27,6 @@ Response
         },
         ...
     ]
-}
-
-=== user.join
-[source]
-{
-    "name": "my name",
-    "password": "secret"
-}
-
-Response
-[source]
-{
-    "status": 200, // 400 if login invalid; 500 if `id` or `password` is not set
-    "message": {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-    }
-}
-
-=== user.joined
-Recipients: all joined users
-[source]
-{
-    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-}
-
-=== user.leave
-[source]
-{
-}
-
-[source]
-{
-    "status": 200 // 401 if not joined
 }
 
 === user.left

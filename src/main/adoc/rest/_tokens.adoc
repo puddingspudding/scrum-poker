@@ -1,5 +1,5 @@
 == Tokens
-Tokens are valid for the next 12 hours
+Tokens are valid for the next 24 hours
 [source]
 /tokens
 

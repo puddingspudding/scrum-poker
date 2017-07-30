@@ -6,6 +6,7 @@
     "asciidoctor-cli": "^1.5.5-beta.3",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
+    "cors": "^2.8.4",
     "express": "^4.15.2",
     "jsonwebtoken": "^7.4.1",
     "node-localdb": "0.0.3",

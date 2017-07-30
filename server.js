@@ -7,6 +7,7 @@ var os = require('os');
 var db = require('node-localdb');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
+var cors = require('cors');
 const saltRounds = 10;
 
 var userEvents = require("./src/main/js/events/user.js");
@@ -68,6 +69,7 @@ usersDB.find({}).then(function(users) {
     });    
 });
 
+app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/src/main/html/index.html');

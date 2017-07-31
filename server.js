@@ -86,7 +86,7 @@ app.get('/users', function(req, res) {
         }
         res.send(JSON.stringify(users));    
     });
-})
+});
 app.post('/tokens', function(req, res) {
     var userReq = req.body;
     try {
@@ -167,9 +167,12 @@ app.post('/users', function(req, res) {
 io.use((socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token){
     jwt.verify(socket.handshake.query.token, SECRET_KEY, function(err, decoded) {
-      if(err) return next(new Error('Authentication error'));
+      if(err) {
+        next(new Error('Authentication error'));
+        socket.disconnect();
+        return;
+      }
       socket.userId = decoded.id;
-
       next();
     });
   } else {

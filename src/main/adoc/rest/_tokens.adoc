@@ -1,0 +1,22 @@
+== Tokens
+Tokens are valid for the next 24 hours
+[source]
+/tokens
+
+=== POST
+Creates a new token.
+
+Request Header
+[source]
+Content-type: application/json
+
+Request Body
+[source]
+{
+    "name": "my name",
+    "password": "secret"
+}
+
+Response (JWT)
+[source]
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2M2MyODBhLTNiYjUtNGZlOC1iY2RhLWNlYWJlMmFiYzIyMiIsIm5hbWUiOiJteSBuYW1lIiwiaWF0IjoxNTAxMjY0Mzk2LCJleHAiOjE1MDEzNTA3OTZ9.50sT-mmp0OtdsHqsxrjOhwQnoyhFMAXdapcShnET8lsasd

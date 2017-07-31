@@ -1,9 +1,14 @@
 var app = require('express')();
+var bodyParser = require('body-parser');
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var os = require('os');
 var db = require('node-localdb');
-
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt');
+var cors = require('cors');
+const saltRounds = 10;
 
 var userEvents = require("./src/main/js/events/user.js");
 var groupEvents = require("./src/main/js/events/group.js");
@@ -21,6 +26,8 @@ var socketsByUserId = {};
 var userIdsByGroupId = {};
 var betsByGroupId = {};
 var groupIdsByUserId = {};
+
+const SECRET_KEY = bcrypt.hashSync(uuidv4(), saltRounds);
 
 usersDB.find({}).then(function(users) {
     if (users) {
@@ -62,12 +69,121 @@ usersDB.find({}).then(function(users) {
     });    
 });
 
-
+app.use(cors());
+app.use(bodyParser.json()); // for parsing application/json
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/src/main/html/index.html');
 });
+app.get('/users', function(req, res) {
+    var token = req.header('Authorization');
+    if (!token || token.length == 0) {
+        return res.status(401).end();
+    }
+    jwt.verify(token, SECRET_KEY, function(err, decoded) {
+        var users = [];
+        for (var userId in usersById) {
+            users.push(usersById[userId]);
+        }
+        res.send(JSON.stringify(users));    
+    });
+})
+app.post('/tokens', function(req, res) {
+    var userReq = req.body;
+    try {
+        if (!('name' in userReq)) {
+            throw 'name not set';
+        }
+        if (typeof userReq.name !== 'string') {
+            throw 'name is not a string';
+        }
+        if (!('password' in userReq)) {
+            throw 'password not set';
+        }
+        if (typeof userReq.password !== 'string') {
+            throw 'password is not a string';
+        }
 
-io.on('connection', function(socket){   
+        usersDB.findOne({'name': userReq.name}).then(function(user, err) {
+            if (userReq && bcrypt.compareSync(userReq.password, user.password)) {
+                res.send(jwt.sign(usersById[user._id], SECRET_KEY, { expiresIn: '24h' }));
+            } else {
+                res.status(400).send('login invalid');
+            }
+        });
+
+    } catch (e) {
+        console.error(e);
+        res.status(500).send(e);
+    }
+})
+app.post('/users', function(req, res) {
+    var user = req.body;
+    try {
+            // name validation
+            if (!('name' in user)) {
+                throw 'name not set';
+            }
+            if (typeof user.name !== 'string') {
+                throw 'name is not a string';
+            }
+            if (user.name.length < 3 || user.name.length > 64) {
+                throw 'name length < 3 or > 64';
+            }
+            
+            // password validation
+            if (!('password' in user)) {
+                throw 'password not set';
+            }
+            if (typeof user.password !==  'string') {
+                throw 'password is not a string';
+            }
+            if (user.password.length < 8) {
+                throw 'password min length 8';
+            }
+            user.name = user.name.trim();
+
+            usersDB.findOne({"name": user.name}).then(function(existingUser) {
+                if (existingUser) {
+                    res.status(400).send('name already exists');
+                    return;
+                }
+                usersDB.insert({
+                    'name': user.name,
+                    'password': bcrypt.hashSync(user.password, saltRounds)
+                }).then(function(r) {
+                    usersById[r._id] = {
+                        'id': r._id,
+                        'name': user.name
+                    }
+                    res.send(jwt.sign(usersById[r._id], SECRET_KEY, { expiresIn: '24h' }));
+                });
+            });
+        } catch (e) {
+            console.error(e);
+            res.status(500).send(e);
+        }
+});
+
+io.use((socket, next) => {
+  if (socket.handshake.query && socket.handshake.query.token){
+    jwt.verify(socket.handshake.query.token, SECRET_KEY, function(err, decoded) {
+      if(err) return next(new Error('Authentication error'));
+      socket.userId = decoded.id;
+
+      next();
+    });
+  } else {
+    next(new Error('Authentication error'));  
+    socket.disconnect();
+  }
+});
+
+io.on('connection', function(socket){
+
+    socketsByUserId[socket.userId] = socket;
+    for (var userId in socketsByUserId) {
+        socketsByUserId[userId].emit('user.joined', usersById[socket.userId]);
+    }
 
     socket.on('disconnect', function(){
         if ('userId' in socket) {
@@ -75,17 +191,14 @@ io.on('connection', function(socket){
                 if (socketsByUserId[userId] == socket) {
                     delete socketsByUserId[userId];
                 } else {
-                    socketsByUserId[userId].emit('user.left', {"id": userId});  
+                    socketsByUserId[userId].emit('user.left', {"id": socket.userId});  
                 }
-            }    
+            }  
         }
     });
 
     // user.* events
-    userEvents.handleCreateRequests(socket, usersById, usersDB, socketsByUserId, groupIdsByUserId);
-    userEvents.handleJoinRequests(socket, socketsByUserId, usersDB);
     userEvents.handleListRequests(socket, socketsByUserId, usersById);
-    userEvents.handleLeaveRequests(socket, socketsByUserId);
     userEvents.handleGroupsRequests(socket, groupIdsByUserId);
 
     // group.* events

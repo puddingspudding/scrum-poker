@@ -6,15 +6,43 @@
   <body>
     <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io();
 
-  socket.on('user.joined', console.log);
-  socket.on('user.created', console.log);
-  socket.on('user.left', console.log);
+  var socket;
+  
+  // login or register
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/tokens'); // /users for register
+  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.onload = function () {
+      var token = this.responseText;
 
-  socket.on('group.poker.started', console.log);
-  socket.on('group.poker.betted', console.log);
-  socket.on('group.poker.ended', console.log);
+      var xhr2 = new XMLHttpRequest();
+      xhr2.open('GET', '/users');
+      xhr2.setRequestHeader("Content-type", "application/json");
+      xhr2.setRequestHeader("Authorization", token);
+      xhr2.send();
+
+      socket = io({
+        query: {
+          token: token
+        }
+      });
+
+      
+
+      socket.on('connect', (s) => {
+        console.log('connected');
+        socket.on('user.joined', function(e) {console.log("user.join", e);});
+        socket.on('user.left', function(e) {console.log("user.left", e);});
+
+        socket.on('group.poker.started', console.log);
+        socket.on('group.poker.betted', console.log);
+        socket.on('group.poker.ended', console.log);
+        
+      });
+  };
+  xhr.send(JSON.stringify({"name": "my name2", "password": "12345678"}));
+  
 
 </script>
 

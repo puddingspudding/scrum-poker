@@ -1,0 +1,39 @@
+== Users
+[source]
+/users
+
+=== POST
+Request Header
+[source]
+Content-type: application/json
+
+Request Body
+[source]
+{
+    "name": "my name",
+    "password": "secret"
+}
+
+Response
+(JWT)
+[source]
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2M2MyODBhLTNiYjUtNGZlOC1iY2RhLWNlYWJlMmFiYzIyMiIsIm5hbWUiOiJteSBuYW1lIiwiaWF0IjoxNTAxMjY0Mzk2LCJleHAiOjE1MDEzNTA3OTZ9.50sT-mmp0OtdsHqsxrjOhwQnoyhFMAXdapcShnET8lsasd
+
+=== GET
+List of all users on and offline
+
+Request Header
+[source]
+Content-type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2M2MyODBhLTNiYjUtNGZlOC1iY2RhLWNlYWJlMmFiYzIyMiIsIm5hbWUiOiJteSBuYW1lIiwiaWF0IjoxNTAxMjY0Mzk2LCJleHAiOjE1MDEzNTA3OTZ9.50sT-mmp0OtdsHqsxrjOhwQnoyhFMAXdapcShnET8lsasd
+
+
+Response
+[source]
+[
+    {
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "name": "my name"
+    },
+    ...
+]

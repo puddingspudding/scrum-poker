@@ -104,7 +104,7 @@ app.post('/tokens', function(req, res) {
         }
 
         usersDB.findOne({'name': userReq.name}).then(function(user, err) {
-            if (userReq && bcrypt.compareSync(userReq.password, user.password)) {
+            if (user && bcrypt.compareSync(userReq.password, user.password)) {
                 res.send(jwt.sign(usersById[user._id], SECRET_KEY, { expiresIn: '24h' }));
             } else {
                 res.status(400).send('login invalid');

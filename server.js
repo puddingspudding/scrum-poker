@@ -155,6 +155,7 @@ app.post('/users', function(req, res) {
                         'id': r._id,
                         'name': user.name
                     }
+                    groupIdsByUserId[r._id] = [];
                     res.send(jwt.sign(usersById[r._id], SECRET_KEY, { expiresIn: '24h' }));
                 });
             });

@@ -47,7 +47,8 @@ usersDB.find({}).then(function(users) {
                 var group = {
                     'id': groups[key]._id,
                     'name': groups[key].name,
-                    'userId': groups[key].userId
+                    'userId': groups[key].userId,
+                    'poker': false
                 };
                 groupsById[group.id] = group;
                 userIdsByGroupId[group.id] = [];
@@ -210,8 +211,9 @@ io.on('connection', function(socket){
     groupEvents.handleListRequests(socket, groupsById);
     groupEvents.handleUsersRequests(socket, userIdsByGroupId, groupIdsByUserId, groupsById);
     groupEvents.handleJoinRequests(socket, socketsByUserId, groupIdsByUserId, userIdsByGroupId, groupusersDB, groupsDB);
+    groupEvents.handlePokerBetsRequests(socket, userIdsByGroupId, groupsById, betsByGroupId);
     groupEvents.handlePokerStartRequests(socket, socketsByUserId, userIdsByGroupId, groupsById, betsByGroupId);
-    groupEvents.handlePokerBetRequests(socket, betsByGroupId, groupIdsByUserId, userIdsByGroupId, socketsByUserId);
+    groupEvents.handlePokerBetRequests(socket, betsByGroupId, groupIdsByUserId, userIdsByGroupId, socketsByUserId, groupsById);
     groupEvents.handlePokerEndRequests(socket, betsByGroupId, socketsByUserId, userIdsByGroupId, groupsById);
 
 });

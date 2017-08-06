@@ -37,12 +37,14 @@ exports.handleCreateRequests = function(socket, groupsById, socketsByUserId, gro
             groupsDB.insert({
                 'name': request.name,
                 'password': bcrypt.hashSync(request.password, saltRounds),
-                'userId': socket.userId
+                'userId': socket.userId,
+                'poker': false
             }).then(function(g) {
                 var group = {
                     'id': g._id,
                     'name': request.name,
-                    'userId': socket.userId
+                    'userId': socket.userId,
+                    'poker': false
                 };
                 groupusersDB.insert({
                     'groupId': group.id,
@@ -54,9 +56,7 @@ exports.handleCreateRequests = function(socket, groupsById, socketsByUserId, gro
 
                     response({
                         'status': 200,
-                        'message': {
-                            'id': group.id
-                        }
+                        'message': group
                     });
                     for (var userId in socketsByUserId) {
                         socketsByUserId[userId].emit('group.created', group);
@@ -214,6 +214,63 @@ exports.handleJoinRequests = function(socket, socketsByUserId, groupIdsByUserId,
     });
 };
 
+exports.handlePokerBetsRequests = function(socket, userIdsByGroupId, groupsById, betsByGroupId) {
+    socket.on('group.poker.bets', function(request, response) {
+        if (!('userId' in socket)) {
+            response({
+                'status': 401
+            });
+            return;
+        }
+        try {
+            if (!('id' in request)) {
+                throw 'id not set';
+            }
+            if (typeof request.id !== 'string') {
+                throw 'id is not a string';
+            }
+
+            // check if group exists and user is owner
+            if (!(request.id in groupsById)) {
+                response({
+                    'status': 404
+                });
+                return;
+            }
+
+            if (userIdsByGroupId[request.id].indexOf(socket.userId) == -1) {
+                response({
+                    'status': 403
+                });
+                return;
+            }
+
+            var bets = [];
+            var hideValues = groupsById[request.id].poker;
+            for (var key in betsByGroupId[request.id]) {
+                var bet = {
+                    'userId': betsByGroupId[request.id][key].userId,
+                    'bet': betsByGroupId[request.id][key].bet
+                };
+                if (hideValues) {
+                    delete bet['bet'];
+                }
+                bets.push(bet);
+            }
+            response({
+                'status': 200,
+                'message': bets
+            });
+
+        } catch (e) {
+            console.error(e);
+            response({
+                'status': 500,
+                'message': e
+            });
+        }
+    });
+};
 
 exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGroupId, groupsById, betsByGroupId) {
     socket.on('group.poker.start', function(request, response) {
@@ -234,19 +291,20 @@ exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGr
 
             // check if group exists and user is owner
             if (!(request.id in groupsById)) {
-                socket.emit('group.poker.start.response', {
+                response({
                     'status': 404
                 });
                 return;
             }
             if (groupsById[request.id].userId != socket.userId) {
-                socket.emit('group.poker.start.response', {
+                response({
                     'status': 403
                 });
                 return;   
             }
 
             betsByGroupId[request.id] = [];
+            groupsById[request.id].poker = true;
 
             response({
                 'status': 200
@@ -269,7 +327,7 @@ exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGr
     });
 };
 
-exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserId, userIdsByGroupId, socketsByUserId) {
+exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserId, userIdsByGroupId, socketsByUserId, groupsById) {
     socket.on('group.poker.bet', function(request, response) {
         if (!('userId' in socket)) {
             response({
@@ -277,7 +335,7 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
             });
             return;
         }
-        
+
         try {
             if (!('id' in request)) {
                 throw 'id not set';
@@ -303,6 +361,10 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
 
             if ([1,2,3,5,8,13,20,30,40,100].indexOf(request.bet) == -1) {
                 throw 'invalid bet';
+            }
+            if (!groupsById[request.id].poker) {
+                throw 'poker not started';
+                return; 
             }
             
             betsByGroupId[request.id].push({
@@ -370,7 +432,7 @@ exports.handlePokerEndRequests = function(socket, betsByGroupId, socketsByUserId
             });
 
             var bets = betsByGroupId[request.id];
-            betsByGroupId[request.id] = []
+            groupsById[request.id].poker = false;
 
             for (var key in userIdsByGroupId[request.id]) {
                 var s = socketsByUserId[userIdsByGroupId[request.id][key]];

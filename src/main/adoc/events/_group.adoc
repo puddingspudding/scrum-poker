@@ -13,7 +13,10 @@ Response
 {
     "status": 200, // 401 if not joined
     "message": {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+        "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "name": "my group name",
+        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+        "poker": false
     }
 }
 
@@ -23,7 +26,8 @@ Recipients: all joined users
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
     "name": "my group nyme",
-    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
+    "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "poker": false
 }
 
 === group.list
@@ -41,7 +45,8 @@ List of all available groups
         {
             "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
             "name": "my group name",
-            "userId": "7686d130-2223-4769-ab9f-5cebcf795e80"
+            "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+            "poker": false
         },
         ...
     ]
@@ -107,6 +112,27 @@ Recipients: users in group
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
 
+=== group.poker.bets
+Lists current bets in this group. If group is in poker state, actual bet values are hidden 
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+}
+
+Response
+[source]
+{
+    "status": 200, // 401 if not joined; 403 if not in group; 404 if group does not exists
+    "message": [
+        {
+            "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+            "bet": 30 // optional
+        },
+        ...
+    ]
+}
+
+
 === group.poker.bet
 [source]
 {
@@ -117,7 +143,7 @@ Recipients: users in group
 Response
 [source]
 {
-    "status": 200 // 401 if not joined; 404 if not in group; 500 if `bet` not valid or `id` not valid
+    "status": 200 // 401 if not joined; 404 if not in group; 500 if `bet` not valid, `id` not valid or poker has not started yet
 }
 
 === group.poker.betted

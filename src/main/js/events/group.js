@@ -368,7 +368,6 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
             }
             
             betsByGroupId[request.id].push({
-                'groupId': request.id,
                 'userId': socket.userId,
                 'bet': request.bet
             });
@@ -434,10 +433,15 @@ exports.handlePokerEndRequests = function(socket, betsByGroupId, socketsByUserId
             var bets = betsByGroupId[request.id];
             groupsById[request.id].poker = false;
 
+            var responseEvent = {
+                'id': request.id,
+                'bets': bets
+            };
+
             for (var key in userIdsByGroupId[request.id]) {
                 var s = socketsByUserId[userIdsByGroupId[request.id][key]];
                 if (s) {
-                    s.emit('group.poker.ended', bets);
+                    s.emit('group.poker.ended', responseEvent);
                 }
             }
         } catch (e) {

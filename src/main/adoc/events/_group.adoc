@@ -170,12 +170,13 @@ Response
 === group.poker.ended
 Recipients: users in group
 [source]
-[
-    {
-        "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
-        "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
-        "bet": 13
-    },
-    ...
-]
-
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "bets": [
+        {
+            "userId": "7686d130-2223-4769-ab9f-5cebcf795e80",
+            "bet": 13
+        },
+        ...
+    ]
+}

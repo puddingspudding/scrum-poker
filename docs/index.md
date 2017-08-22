@@ -283,6 +283,7 @@ Lists current bets in this group. If group is in poker state, actual bet values 
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
+```
 
 Response
 ```json

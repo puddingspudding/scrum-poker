@@ -88,6 +88,39 @@ app.get('/users', function(req, res) {
         res.send(JSON.stringify(users));    
     });
 });
+app.put('/users/:id', function(req, res) {
+    var token = req.header('Authorization');
+    if (!token || token.length == 0) {
+        return res.status(401).end();
+    }
+    if (!('oldPassword' in req.body)) {
+        return res.status(400).end('old password not set');
+    }
+    var oldPassword = req.body.oldPassword;
+    if (!('newPassword' in req.body)) {
+        return res.status(400).end('new password not set');
+    }
+    var newPassword = req.body.newPassword;
+
+    jwt.verify(token, SECRET_KEY, function(err, decoded) {
+        if (err || decoded.id != req.params.id) {
+            return res.status(401).end('token invalid');
+        }
+        usersDB.findOne({'_id': req.params.id}).then(function(user, err) {
+            if (user && bcrypt.compareSync(oldPassword, user.password)) {
+                user.password = bcrypt.hashSync(newPassword, saltRounds);
+                usersDB.update({'_id': req.params.id}, user).then(function(updatedUser, err) {
+                    if (err) {
+                        return res.status(500).end();
+                    }
+                    return res.status(200).end();
+                });
+            } else {
+                return res.status(401).end('user not found or invalid password');
+            }
+        });
+    });
+});
 app.post('/tokens', function(req, res) {
     var userReq = req.body;
     try {
@@ -120,50 +153,50 @@ app.post('/tokens', function(req, res) {
 app.post('/users', function(req, res) {
     var user = req.body;
     try {
-            // name validation
-            if (!('name' in user)) {
-                throw 'name not set';
-            }
-            if (typeof user.name !== 'string') {
-                throw 'name is not a string';
-            }
-            if (user.name.length < 3 || user.name.length > 64) {
-                throw 'name length < 3 or > 64';
-            }
-            
-            // password validation
-            if (!('password' in user)) {
-                throw 'password not set';
-            }
-            if (typeof user.password !==  'string') {
-                throw 'password is not a string';
-            }
-            if (user.password.length < 8) {
-                throw 'password min length 8';
-            }
-            user.name = user.name.trim();
-
-            usersDB.findOne({"name": user.name}).then(function(existingUser) {
-                if (existingUser) {
-                    res.status(400).send('name already exists');
-                    return;
-                }
-                usersDB.insert({
-                    'name': user.name,
-                    'password': bcrypt.hashSync(user.password, saltRounds)
-                }).then(function(r) {
-                    usersById[r._id] = {
-                        'id': r._id,
-                        'name': user.name
-                    }
-                    groupIdsByUserId[r._id] = [];
-                    res.send(jwt.sign(usersById[r._id], SECRET_KEY, { expiresIn: '24h' }));
-                });
-            });
-        } catch (e) {
-            console.error(e);
-            res.status(500).send(e);
+        // name validation
+        if (!('name' in user)) {
+            throw 'name not set';
         }
+        if (typeof user.name !== 'string') {
+            throw 'name is not a string';
+        }
+        if (user.name.length < 3 || user.name.length > 64) {
+            throw 'name length < 3 or > 64';
+        }
+        
+        // password validation
+        if (!('password' in user)) {
+            throw 'password not set';
+        }
+        if (typeof user.password !==  'string') {
+            throw 'password is not a string';
+        }
+        if (user.password.length < 8) {
+            throw 'password min length 8';
+        }
+        user.name = user.name.trim();
+
+        usersDB.findOne({"name": user.name}).then(function(existingUser) {
+            if (existingUser) {
+                res.status(400).send('name already exists');
+                return;
+            }
+            usersDB.insert({
+                'name': user.name,
+                'password': bcrypt.hashSync(user.password, saltRounds)
+            }).then(function(r) {
+                usersById[r._id] = {
+                    'id': r._id,
+                    'name': user.name
+                }
+                groupIdsByUserId[r._id] = [];
+                res.send(jwt.sign(usersById[r._id], SECRET_KEY, { expiresIn: '24h' }));
+            });
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).send(e);
+    }
 });
 
 io.use((socket, next) => {

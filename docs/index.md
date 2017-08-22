@@ -216,7 +216,7 @@ Request user ids for given group
 {
     "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
 }
-json
+```
 
 Response:
 List of user ids

@@ -1,0 +1,54 @@
+== User
+`id` in request/reponse events are user ids
+
+
+=== user.joined
+Recipients: all joined users
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+    "name": "my name"
+}
+
+=== user.list
+Lists all connetecd users
+[source]
+{
+}
+
+Response
+[source]
+{
+    "status": 200, // 401 if not joined
+    "message": [
+        {
+            "id": "7686d130-2223-4769-ab9f-5cebcf795e80",
+            "name": "my name"
+        },
+        ...
+    ]
+}
+
+=== user.left
+Recipients: all joined users
+[source]
+{
+    "id": "7686d130-2223-4769-ab9f-5cebcf795e80"
+}
+
+=== user.groups
+Request for all group ids you are in
+[source]
+{
+}
+
+Response:
+[source]
+{
+    "status": 200, // 401 if not joined
+    "message": [
+        "7686d130-2223-4769-ab9f-5cebcf795e80",
+        ...
+    ]
+}
+

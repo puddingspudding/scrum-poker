@@ -303,7 +303,7 @@ exports.handlePokerStartRequests = function(socket, socketsByUserId, userIdsByGr
                 return;   
             }
 
-            betsByGroupId[request.id] = [];
+            betsByGroupId[request.id] = {};
             groupsById[request.id].poker = true;
 
             response({
@@ -367,10 +367,10 @@ exports.handlePokerBetRequests = function(socket, betsByGroupId, groupIdsByUserI
                 return; 
             }
             
-            betsByGroupId[request.id].push({
+            betsByGroupId[request.id][socket.userId] = {
                 'userId': socket.userId,
                 'bet': request.bet
-            });
+            };
             response({
                 'status': 200
             });
@@ -430,7 +430,11 @@ exports.handlePokerEndRequests = function(socket, betsByGroupId, socketsByUserId
                 'status': 200
             });
 
-            var bets = betsByGroupId[request.id];
+            var bets = [];
+            for (var userId in betsByGroupId[request.id]) {
+                bets.push(betsByGroupId[request.id][userId]);
+            }
+
             groupsById[request.id].poker = false;
 
             var responseEvent = {

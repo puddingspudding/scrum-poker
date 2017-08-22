@@ -1,0 +1,40 @@
+= Scrum Poker Websocket API
+:toc: left
+:toclevels: 4
+
+== Quick Start
+
+[source,html]
+<script src="http://host:port/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    socket.emit("user.create.request", {
+        "name": "my name",
+        "password": "secret"
+    }, function(response) {
+        if (response.status == 200) {
+            console.log("user created", response.message);
+        } else {
+            console.log("error", response.message);
+        }
+    });
+</script>
+
+== REST
+
+include::rest/_users.adoc[leveloffset=+1]
+include::rest/_tokens.adoc[leveloffset=+1]
+
+== Events
+
+Events emitted by the user always have a callback reponse. The response always contain a `status` key and indicates the result of the response using HTTP status codes. The `message` key in the response contains the response message if there is any.
+
+Some events dont follow the request/response pattern. Those events just contain the data. They dont have the `status` and `message` key
+
+include::events/_user.adoc[leveloffset=+1]
+include::events/_group.adoc[leveloffset=+1]
+
+
+== Examples
+
+...

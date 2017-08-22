@@ -52,7 +52,7 @@ usersDB.find({}).then(function(users) {
                 };
                 groupsById[group.id] = group;
                 userIdsByGroupId[group.id] = [];
-                betsByGroupId[group.id] = [];
+                betsByGroupId[group.id] = {};
             }    
         }
     });    

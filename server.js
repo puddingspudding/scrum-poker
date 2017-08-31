@@ -185,6 +185,9 @@ io.use((socket, next) => {
 
 io.on('connection', function(socket){
 
+    if (socket.userId in socketsByUserId) {
+        socketsByUserId[socket.userId].disconnect();
+    }
     socketsByUserId[socket.userId] = socket;
     for (var userId in socketsByUserId) {
         socketsByUserId[userId].emit('user.joined', usersById[socket.userId]);

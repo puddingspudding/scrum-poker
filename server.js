@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var app = require('express')();
+var express = require('express');
+var app = express();
 var bodyParser = require('body-parser');
 
 var http = require('http').Server(app);
@@ -74,9 +75,7 @@ usersDB.find({}).then(function(users) {
 
 app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/src/main/html/index.html');
-});
+app.use(express.static('public'));
 app.get('/users', function(req, res) {
     var token = req.header('Authorization');
     if (!token || token.length == 0) {

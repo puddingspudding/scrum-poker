@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var app = require('express')();
 var bodyParser = require('body-parser');
 

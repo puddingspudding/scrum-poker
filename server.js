@@ -13,6 +13,22 @@ var bcrypt = require('bcrypt');
 var cors = require('cors');
 const fs = require('fs');
 const process = require('process');
+const pidFile = "/tmp/scrumpoker.pid";
+
+if (fs.existsSync(pidFile)) {
+    const pid = fs.readFileSync(pidFile).toString();
+    console.log('already running pid: ' + pid);
+    return;
+}
+
+fs.appendFileSync(pidFile, process.pid);
+var deletePid = function() {
+    if (fs.existsSync(pidFile)) {
+        fs.unlinkSync(pidFile);
+    }
+};
+process.on('exit', deletePid);
+process.on('SIGINT', deletePid);
 
 const defaultConfig = {
     "host": "0.0.0.0",
@@ -253,7 +269,9 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(config.port, config.host, function(a,b,c){
-    console.log(config);
+var server = http.listen(config.port, config.host, function(a,b,c){
     console.log('listening on ' + config.host + ':' + config.port);
+});
+process.on('SIGINT', function() {
+    server.close();
 });

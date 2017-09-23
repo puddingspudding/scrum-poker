@@ -215,7 +215,8 @@ app.post('/users', function(req, res) {
             res.status(500).send(e);
         }
 });
-app.use(express.static(process.cwd() + '/public'));
+
+app.use(express.static(__dirname + '/public'));
 
 io.use((socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token){

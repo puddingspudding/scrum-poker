@@ -215,7 +215,7 @@ app.post('/users', function(req, res) {
             res.status(500).send(e);
         }
 });
-app.use('*', express.static('public'));
+app.use(express.static('public'));
 
 io.use((socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token){

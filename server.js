@@ -34,10 +34,10 @@ const defaultConfig = {
     "host": "0.0.0.0",
     "port": 3000,
     "data": {
-        "dir": "."
+        "dir": __dirname
     },
     "log": {
-        "dir": "."
+        "dir": __dirname
     }
 }
 
@@ -57,9 +57,9 @@ var groupEvents = require("./src/main/js/events/group.js");
 
 const uuidv4 = require('uuid/v4');
 
-var usersDB = db('users.json');
-var groupsDB = db('groups.json');
-var groupusersDB = db('groupusers.json');
+var usersDB = db(config.data.dir + '/users.json');
+var groupsDB = db(config.data.dir + '/groups.json');
+var groupusersDB = db(config.data.dir + '/groupusers.json');
 
 var usersById = {};
 var groupsById = {};

@@ -11,12 +11,34 @@ var db = require('node-localdb');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var cors = require('cors');
+const fs = require('fs');
+const process = require('process');
+
+const defaultConfig = {
+    "host": "0.0.0.0",
+    "port": 3000,
+    "data": {
+        "dir": "."
+    },
+    "log": {
+        "dir": "."
+    }
+}
+
+const config = Object.assign(
+    defaultConfig,
+    process.argv.length >= 3 ? JSON.parse(fs.readFileSync(process.argv[2]).toString()) : {}
+);
+
+const output = fs.createWriteStream(config.log.dir + '/stdout.log');
+const errorOutput = fs.createWriteStream(config.log.dir + '/stderr.log');
+const logger = new console.Console(output, errorOutput);
+
 const saltRounds = 10;
 
 var userEvents = require("./src/main/js/events/user.js");
 var groupEvents = require("./src/main/js/events/group.js");
 
-const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 
 var usersDB = db('users.json');
@@ -75,7 +97,8 @@ usersDB.find({}).then(function(users) {
 
 app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
-app.use(express.static('public'));
+
+
 app.get('/users', function(req, res) {
     var token = req.header('Authorization');
     if (!token || token.length == 0) {
@@ -93,16 +116,20 @@ app.post('/tokens', function(req, res) {
     var userReq = req.body;
     try {
         if (!('name' in userReq)) {
-            throw 'name not set';
+            res.status(400).send('name not set');
+            return;
         }
         if (typeof userReq.name !== 'string') {
-            throw 'name is not a string';
+            res.status(400).send('name is not a string');
+            return;
         }
         if (!('password' in userReq)) {
-            throw 'password not set';
+            res.status(400).send('password not set');
+            return;
         }
         if (typeof userReq.password !== 'string') {
-            throw 'password is not a string';
+            res.status(400).send('password not set');
+            return;
         }
 
         usersDB.findOne({'name': userReq.name}).then(function(user, err) {
@@ -114,7 +141,7 @@ app.post('/tokens', function(req, res) {
         });
 
     } catch (e) {
-        console.error(e);
+        logger.error(e);
         res.status(500).send(e);
     }
 })
@@ -123,24 +150,30 @@ app.post('/users', function(req, res) {
     try {
             // name validation
             if (!('name' in user)) {
-                throw 'name not set';
+                res.status(400).send('name not set');
+                return;
             }
             if (typeof user.name !== 'string') {
-                throw 'name is not a string';
+                res.status(400).send('name is not a string');
+                return;
             }
             if (user.name.length < 3 || user.name.length > 64) {
-                throw 'name length < 3 or > 64';
+                res.status(400).send('name length < 3 or > 64');
+                return;
             }
             
             // password validation
             if (!('password' in user)) {
-                throw 'password not set';
+                res.status(400).send('password not set');
+                return;
             }
             if (typeof user.password !==  'string') {
-                throw 'password is not a string';
+                res.status(400).send('password is not a string');
+                return;
             }
             if (user.password.length < 8) {
-                throw 'password min length 8';
+                res.status(400).send('password min length 8');
+                return;
             }
             user.name = user.name.trim();
 
@@ -162,10 +195,11 @@ app.post('/users', function(req, res) {
                 });
             });
         } catch (e) {
-            console.error(e);
+            logger.error(e);
             res.status(500).send(e);
         }
 });
+app.use(express.static('public'));
 
 io.use((socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token){
@@ -219,7 +253,7 @@ io.on('connection', function(socket){
 
 });
 
-
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(config.port, config.host, function(a,b,c){
+    console.log(config);
+    console.log('listening on ' + config.host + ':' + config.port);
 });

@@ -3,14 +3,15 @@
   "version": "0.0.1",
   "description": "Royal Straight Flush",
   "dependencies": {
-    "asciidoctor-cli": "^1.5.5-beta.3",
-    "bcrypt": "^1.0.2",
+    "asciidoctor-cli": "^1.5.6-rc.1",
+    "bcrypt": "^3.0.4",
     "body-parser": "^1.17.2",
     "cors": "^2.8.4",
     "express": "^4.15.2",
-    "jsonwebtoken": "^7.4.1",
+    "jsonwebtoken": "^8.4.0",
     "node-localdb": "0.0.3",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "uuid": "^3.3.2"
   },
   "scripts": {
     "docs": "./node_modules/asciidoctor-cli/bin/asciidoctorjs -B ./src/main/adoc/ src/main/adoc/index.adoc -D ./docs",
